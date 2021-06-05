@@ -22,4 +22,4 @@ jobs:
       - uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-command: yarn test --ci --silent --useStderr --coverage
+          test-command: npm run test --ci --silent --useStderr --coverage
