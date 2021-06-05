@@ -143,10 +143,10 @@ function main() {
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         core.debug(`Working directory resolved at ${dir}`);
-        const commandResult = child_process_1.execSync(command);
-        core.debug(`commandResult -- ${commandResult.toString()}`);
+        const commandResult = child_process_1.execSync(command).toString();
+        core.debug(`commandResult -- ${commandResult}`);
         core.debug(`Building comment...`);
-        const comment = utils_1.commentTemplate(workDir, commandResult.toString());
+        const comment = utils_1.commentTemplate(workDir, commandResult);
         core.debug(`Built comment... ${comment}`);
         core.debug(`Commenting on pull request...`);
         pr_1.handlePullRequestMessage(comment, githubToken);
@@ -154,20 +154,29 @@ function main() {
     });
 }
 // Main Loop
-;
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield main();
+try {
+    main();
+}
+catch (err) {
+    if (err.message.stderr) {
+        core.setFailed(err.message.stderr);
     }
-    catch (err) {
-        if (err.message.stderr) {
-            core.setFailed(err.message.stderr);
-        }
-        else {
-            core.setFailed(err.message);
-        }
+    else {
+        core.setFailed(err.message);
     }
-}))();
+}
+// // Main Loop
+// ;(async () => {
+//   try {
+//     await main()
+//   } catch (err) {
+//     if (err.message.stderr) {
+//       core.setFailed(err.message.stderr)
+//     } else {
+//       core.setFailed(err.message)
+//     }
+//   }
+// })()
 
 
 /***/ }),

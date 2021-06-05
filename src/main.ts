@@ -16,11 +16,11 @@ async function main(): Promise<void> {
   const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
   core.debug(`Working directory resolved at ${dir}`)
 
-  const commandResult = execSync(command)
-  core.debug(`commandResult -- ${commandResult.toString()}`)
+  const commandResult = execSync(command).toString()
+  core.debug(`commandResult -- ${commandResult}`)
 
   core.debug(`Building comment...`)
-  const comment = commentTemplate(workDir, commandResult.toString())
+  const comment = commentTemplate(workDir, commandResult)
 
   core.debug(`Built comment... ${comment}`)
   core.debug(`Commenting on pull request...`)
@@ -30,14 +30,25 @@ async function main(): Promise<void> {
 }
 
 // Main Loop
-;(async () => {
-  try {
-    await main()
-  } catch (err) {
-    if (err.message.stderr) {
-      core.setFailed(err.message.stderr)
-    } else {
-      core.setFailed(err.message)
-    }
+try {
+  main()
+} catch (err) {
+  if (err.message.stderr) {
+    core.setFailed(err.message.stderr)
+  } else {
+    core.setFailed(err.message)
   }
-})()
+}
+
+// // Main Loop
+// ;(async () => {
+//   try {
+//     await main()
+//   } catch (err) {
+//     if (err.message.stderr) {
+//       core.setFailed(err.message.stderr)
+//     } else {
+//       core.setFailed(err.message)
+//     }
+//   }
+// })()
