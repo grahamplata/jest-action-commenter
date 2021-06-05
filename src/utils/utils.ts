@@ -9,13 +9,10 @@ export function invariant(
 
 // commentTemplate
 export function commentTemplate(header?: string, message?: string): string {
-  let comment = ''
-  if (header) {
-    comment = `### ${header} Coverage Results \n`
-  }
-  const mes =
-    `${comment}<details>\n<summary>Click to expand!</summary>\n\n` +
+  const top = `### ${header} Coverage Results \n\n`
+  const bottom =
+    `<details>\n<summary>Click to expand!</summary>\n\n` +
     `\`\`\`shell\n${message}\`\`\`\n`
-
-  return comment + mes
+  const resp = top + bottom
+  return resp
 }
