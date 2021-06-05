@@ -3,7 +3,7 @@ import { exec } from '@actions/exec'
 import * as core from '@actions/core'
 import { makeConfig } from './config'
 import { environmentVariables } from './utils/env'
-import { invariant } from './utils/utils'
+import { invariant, commentTemplate } from './utils/utils'
 
 import { handlePullRequestMessage } from './github/pr'
 
@@ -27,14 +27,13 @@ async function main(): Promise<void> {
   }
 
   await exec(command, [], execOptions)
-  // const commandResult = exec(command)
-  // core.debug(`commandResult should be here-- ${commandResult}`)
+  core.debug(`commandResult should be here-- ${commandResult}`)
 
-  // core.debug(`Building comment...`)
-  // const comment = commentTemplate(workDir, commandResult)
+  core.debug(`Building comment...`)
+  const comment = commentTemplate(workDir, commandResult)
 
-  // core.debug(`Built comment... ${comment}`)
-  // core.debug(`Commenting on pull request...`)
+  core.debug(`Built comment... ${comment}`)
+  core.debug(`Commenting on pull request...`)
   handlePullRequestMessage(commandResult, githubToken)
 
   core.endGroup()
