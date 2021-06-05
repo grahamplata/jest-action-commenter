@@ -1,21 +1,28 @@
 import { resolve } from 'path'
+import { execSync } from 'child_process'
 import * as core from '@actions/core'
 import { makeConfig } from './config'
-import { environmentVariables } from './env'
-import { invariant } from './utils'
-import { handlePullRequestMessage } from './pr'
+import { environmentVariables } from './utils/env'
+import { commentTemplate, invariant } from './utils/utils'
+
+import { handlePullRequestMessage } from './github/pr'
 
 async function main(): Promise<void> {
-  const config = await makeConfig()
-  core.debug(`Loading Config ...`)
+  const { githubToken, command, workDir } = await makeConfig()
+  core.debug(`Loading Config...`)
 
-  const workDir = resolve(environmentVariables.GITHUB_WORKSPACE, config.workDir)
-  core.debug(`Working directory resolved at ${workDir}`)
+  invariant(githubToken, 'github-token is missing.')
 
-  invariant(config.githubToken, 'github-token is missing.')
+  const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
+  core.debug(`Working directory resolved at ${dir}`)
 
-  core.debug(`Commenting on pull request`)
-  handlePullRequestMessage('', config.githubToken)
+  const commandResult = execSync(command).toString()
+
+  core.debug(`Building comment...`)
+  const comment = commentTemplate(workDir, commandResult)
+
+  core.debug(`Commenting on pull request...`)
+  handlePullRequestMessage(comment, githubToken)
 
   core.endGroup()
 }

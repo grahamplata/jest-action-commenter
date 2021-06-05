@@ -1,5 +1,5 @@
 import { context, getOctokit } from '@actions/github'
-import { invariant } from './utils'
+import { invariant } from '../utils/utils'
 
 // handlePullRequestMessage
 export async function handlePullRequestMessage(
