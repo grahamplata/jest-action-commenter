@@ -16,11 +16,11 @@ async function main(): Promise<void> {
   const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
   core.debug(`Working directory resolved at ${dir}`)
 
-  const commandResult = execSync(command).toString()
-  core.debug(`commandResult -- ${commandResult}`)
+  const commandResult = execSync(command)
+  core.debug(`commandResult -- ${commandResult.toString()}`)
 
   core.debug(`Building comment...`)
-  const comment = commentTemplate(workDir, commandResult)
+  const comment = commentTemplate(workDir, commandResult.toString())
 
   core.debug(`Built comment... ${comment}`)
   core.debug(`Commenting on pull request...`)

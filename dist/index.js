@@ -143,10 +143,10 @@ function main() {
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         core.debug(`Working directory resolved at ${dir}`);
-        const commandResult = child_process_1.execSync(command).toString();
-        core.debug(`commandResult -- ${commandResult}`);
+        const commandResult = child_process_1.execSync(command);
+        core.debug(`commandResult -- ${commandResult.toString()}`);
         core.debug(`Building comment...`);
-        const comment = utils_1.commentTemplate(workDir, commandResult);
+        const comment = utils_1.commentTemplate(workDir, commandResult.toString());
         core.debug(`Built comment... ${comment}`);
         core.debug(`Commenting on pull request...`);
         pr_1.handlePullRequestMessage(comment, githubToken);
