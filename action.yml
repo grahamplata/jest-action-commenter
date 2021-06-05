@@ -7,7 +7,7 @@ branding:
 inputs:
   github-token:
     required: true
-    description: "Github Token - ${{ secrets.GITHUB_TOKEN }}"
+    description: "Github Token"
   test-command:
     required: false
     description: "Command to run the tests"
