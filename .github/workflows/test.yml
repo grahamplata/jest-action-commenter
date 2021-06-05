@@ -19,7 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: |
+          npm install -g jest
       - uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-command: yarn test --coverage
+          test-command: yarn test --ci --silent --useStderr --coverage
