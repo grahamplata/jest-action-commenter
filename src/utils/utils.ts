@@ -13,8 +13,9 @@ export function commentTemplate(header?: string, message?: string): string {
   if (header) {
     comment = `### ${header} Coverage Results \n`
   }
-  ;`${comment}<details>\n<summary>Click to expand!</summary>\n\n` +
+  const mes =
+    `${comment}<details>\n<summary>Click to expand!</summary>\n\n` +
     `\`\`\`shell\n${message}\`\`\`\n`
 
-  return comment
+  return comment + mes
 }
