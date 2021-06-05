@@ -24,4 +24,4 @@ jobs:
       - uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-command: npx jest
+          test-command: npx jest --coverage

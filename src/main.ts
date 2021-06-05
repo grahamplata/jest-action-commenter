@@ -34,7 +34,7 @@ async function main(): Promise<void> {
 
   core.debug(`Built comment... ${comment}`)
   core.debug(`Commenting on pull request...`)
-  handlePullRequestMessage(commandResult, githubToken)
+  handlePullRequestMessage(comment, githubToken)
 
   core.endGroup()
 }

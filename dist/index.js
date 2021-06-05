@@ -158,7 +158,7 @@ function main() {
         const comment = utils_1.commentTemplate(workDir, commandResult);
         core.debug(`Built comment... ${comment}`);
         core.debug(`Commenting on pull request...`);
-        pr_1.handlePullRequestMessage(commandResult, githubToken);
+        pr_1.handlePullRequestMessage(comment, githubToken);
         core.endGroup();
     });
 }
