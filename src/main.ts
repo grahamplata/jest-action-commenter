@@ -17,6 +17,7 @@ async function main(): Promise<void> {
   core.debug(`Working directory resolved at ${dir}`)
 
   const commandResult = execSync(command).toString()
+  core.debug(commandResult)
 
   core.debug(`Building comment...`)
   const comment = commentTemplate(workDir, commandResult)
