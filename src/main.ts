@@ -22,6 +22,7 @@ async function main(): Promise<void> {
   core.debug(`Building comment...`)
   const comment = commentTemplate(workDir, commandResult)
 
+  core.debug(`Built comment... ${comment}`)
   core.debug(`Commenting on pull request...`)
   handlePullRequestMessage(comment, githubToken)
 
