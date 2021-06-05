@@ -54,7 +54,7 @@ exports.config = rt
 function makeConfig() {
     return __awaiter(this, void 0, void 0, function* () {
         return exports.config.check({
-            command: core_1.getInput('command', { required: true }),
+            command: core_1.getInput('test-command', { required: true }),
             workDir: core_1.getInput('work-dir') || './',
             githubToken: core_1.getInput('github-token')
         });
@@ -195,6 +195,7 @@ function invariant(condition, message) {
     }
 }
 exports.invariant = invariant;
+// handlePullRequestMessage
 function handlePullRequestMessage(body, githubToken) {
     return __awaiter(this, void 0, void 0, function* () {
         const { payload, repo } = github_1.context;
