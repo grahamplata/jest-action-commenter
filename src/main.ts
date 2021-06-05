@@ -2,7 +2,8 @@ import { resolve } from 'path'
 import * as core from '@actions/core'
 import { makeConfig } from './config'
 import { environmentVariables } from './env'
-import { handlePullRequestMessage, invariant } from './utils'
+import { invariant } from './utils'
+import { handlePullRequestMessage } from './pr'
 
 async function main(): Promise<void> {
   const config = await makeConfig()

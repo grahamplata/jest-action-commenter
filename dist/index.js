@@ -141,6 +141,7 @@ const core = __importStar(__webpack_require__(2186));
 const config_1 = __webpack_require__(88);
 const env_1 = __webpack_require__(9763);
 const utils_1 = __webpack_require__(918);
+const pr_1 = __webpack_require__(515);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const config = yield config_1.makeConfig();
@@ -149,7 +150,7 @@ function main() {
         core.debug(`Working directory resolved at ${workDir}`);
         utils_1.invariant(config.githubToken, 'github-token is missing.');
         core.debug(`Commenting on pull request`);
-        utils_1.handlePullRequestMessage('', config.githubToken);
+        pr_1.handlePullRequestMessage('', config.githubToken);
         core.endGroup();
     });
 }
@@ -172,7 +173,7 @@ function main() {
 
 /***/ }),
 
-/***/ 918:
+/***/ 515:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -187,19 +188,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.handlePullRequestMessage = exports.invariant = void 0;
+exports.handlePullRequestMessage = void 0;
 const github_1 = __webpack_require__(5438);
-function invariant(condition, message) {
-    if (!condition) {
-        throw new Error(message);
-    }
-}
-exports.invariant = invariant;
+const utils_1 = __webpack_require__(918);
 // handlePullRequestMessage
 function handlePullRequestMessage(body, githubToken) {
     return __awaiter(this, void 0, void 0, function* () {
         const { payload, repo } = github_1.context;
-        invariant(payload.pull_request, 'Missing pull request event data.');
+        utils_1.invariant(payload.pull_request, 'Missing pull request event data.');
         const octokit = github_1.getOctokit(githubToken);
         if (body && githubToken) {
             yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number: payload.pull_request.number, body }));
@@ -207,6 +203,23 @@ function handlePullRequestMessage(body, githubToken) {
     });
 }
 exports.handlePullRequestMessage = handlePullRequestMessage;
+
+
+/***/ }),
+
+/***/ 918:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.invariant = void 0;
+function invariant(condition, message) {
+    if (!condition) {
+        throw new Error(message);
+    }
+}
+exports.invariant = invariant;
 
 
 /***/ }),
