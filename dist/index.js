@@ -129,7 +129,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getCommand = void 0;
 const path_1 = __webpack_require__(5622);
 const child_process_1 = __webpack_require__(3129);
 const core = __importStar(__webpack_require__(2186));
@@ -137,12 +136,6 @@ const config_1 = __webpack_require__(88);
 const env_1 = __webpack_require__(8001);
 const utils_1 = __webpack_require__(1316);
 const pr_1 = __webpack_require__(4203);
-function getCommand(command) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return child_process_1.execSync(command).toString();
-    });
-}
-exports.getCommand = getCommand;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const { githubToken, command, workDir } = yield config_1.makeConfig();
@@ -150,13 +143,13 @@ function main() {
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         core.debug(`Working directory resolved at ${dir}`);
-        const commandResult = yield getCommand(command);
-        core.debug(`commandResult should be here-- ${commandResult}`);
-        core.debug(`Building comment...`);
-        const comment = utils_1.commentTemplate(workDir, commandResult);
-        core.debug(`Built comment... ${comment}`);
-        core.debug(`Commenting on pull request...`);
-        pr_1.handlePullRequestMessage(comment, githubToken);
+        const commandResult = child_process_1.execSync(command).toString();
+        // core.debug(`commandResult should be here-- ${commandResult}`)
+        // core.debug(`Building comment...`)
+        // const comment = commentTemplate(workDir, commandResult)
+        // core.debug(`Built comment... ${comment}`)
+        // core.debug(`Commenting on pull request...`)
+        pr_1.handlePullRequestMessage(commandResult, githubToken);
         core.endGroup();
     });
 }

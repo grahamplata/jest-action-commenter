@@ -3,13 +3,9 @@ import { execSync } from 'child_process'
 import * as core from '@actions/core'
 import { makeConfig } from './config'
 import { environmentVariables } from './utils/env'
-import { commentTemplate, invariant } from './utils/utils'
+import { invariant } from './utils/utils'
 
 import { handlePullRequestMessage } from './github/pr'
-
-export async function getCommand(command: string): Promise<string> {
-  return execSync(command).toString()
-}
 
 async function main(): Promise<void> {
   const { githubToken, command, workDir } = await makeConfig()
@@ -20,15 +16,15 @@ async function main(): Promise<void> {
   const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
   core.debug(`Working directory resolved at ${dir}`)
 
-  const commandResult = await getCommand(command)
-  core.debug(`commandResult should be here-- ${commandResult}`)
+  const commandResult = execSync(command).toString()
+  // core.debug(`commandResult should be here-- ${commandResult}`)
 
-  core.debug(`Building comment...`)
-  const comment = commentTemplate(workDir, commandResult)
+  // core.debug(`Building comment...`)
+  // const comment = commentTemplate(workDir, commandResult)
 
-  core.debug(`Built comment... ${comment}`)
-  core.debug(`Commenting on pull request...`)
-  handlePullRequestMessage(comment, githubToken)
+  // core.debug(`Built comment... ${comment}`)
+  // core.debug(`Commenting on pull request...`)
+  handlePullRequestMessage(commandResult, githubToken)
 
   core.endGroup()
 }
