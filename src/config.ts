@@ -21,7 +21,7 @@ export type Config = rt.Static<typeof config>
 // makeConfig
 export async function makeConfig(): Promise<Config> {
   return config.check({
-    command: getInput('command', { required: true }),
+    command: getInput('test-command', { required: true }),
     workDir: getInput('work-dir') || './',
     githubToken: getInput('github-token')
   })
