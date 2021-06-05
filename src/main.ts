@@ -16,7 +16,7 @@ async function main(): Promise<void> {
   const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
   core.debug(`Working directory resolved at ${dir}`)
 
-  const commandResult = execSync(command).toString()
+  const commandResult = execSync(command, { stdio: 'inherit' }).toString()
   // core.debug(`commandResult should be here-- ${commandResult}`)
 
   // core.debug(`Building comment...`)

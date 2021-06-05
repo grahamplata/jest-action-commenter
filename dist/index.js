@@ -143,7 +143,7 @@ function main() {
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         core.debug(`Working directory resolved at ${dir}`);
-        const commandResult = child_process_1.execSync(command).toString();
+        const commandResult = child_process_1.execSync(command, { stdio: 'inherit' }).toString();
         // core.debug(`commandResult should be here-- ${commandResult}`)
         // core.debug(`Building comment...`)
         // const comment = commentTemplate(workDir, commandResult)
