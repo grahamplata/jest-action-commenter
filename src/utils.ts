@@ -27,12 +27,6 @@ export async function handlePullRequestMessage(
 
   if (body && githubToken) {
     if (comment && editCommentOnPr) {
-      await octokit.rest.issues.updateComment({
-        ...repo,
-        comment_id: comment.id,
-        body
-      })
-    } else {
       await octokit.rest.issues.createComment({
         ...repo,
         issue_number: payload.pull_request.number,
