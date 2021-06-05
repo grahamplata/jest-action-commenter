@@ -144,6 +144,7 @@ function main() {
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         core.debug(`Working directory resolved at ${dir}`);
         const commandResult = child_process_1.execSync(command).toString();
+        core.debug(`commandResult -- ${commandResult}`);
         core.debug(`Building comment...`);
         const comment = utils_1.commentTemplate(workDir, commandResult);
         core.debug(`Commenting on pull request...`);
@@ -222,14 +223,11 @@ function invariant(condition, message) {
 exports.invariant = invariant;
 // commentTemplate
 function commentTemplate(header, message) {
-    let comment = '';
-    if (header) {
-        comment = `### ${header} Coverage Results \n`;
-    }
-    ;
-    `${comment}<details>\n<summary>Click to expand!</summary>\n\n` +
+    const top = `### ${header} Coverage Results \n\n`;
+    const bottom = `<details>\n<summary>Click to expand!</summary>\n\n` +
         `\`\`\`shell\n${message}\`\`\`\n`;
-    return comment;
+    const resp = top + bottom;
+    return resp;
 }
 exports.commentTemplate = commentTemplate;
 
