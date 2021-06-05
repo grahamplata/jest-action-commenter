@@ -30,25 +30,14 @@ async function main(): Promise<void> {
 }
 
 // Main Loop
-try {
-  main()
-} catch (err) {
-  if (err.message.stderr) {
-    core.setFailed(err.message.stderr)
-  } else {
-    core.setFailed(err.message)
+;(async () => {
+  try {
+    await main()
+  } catch (err) {
+    if (err.message.stderr) {
+      core.setFailed(err.message.stderr)
+    } else {
+      core.setFailed(err.message)
+    }
   }
-}
-
-// // Main Loop
-// ;(async () => {
-//   try {
-//     await main()
-//   } catch (err) {
-//     if (err.message.stderr) {
-//       core.setFailed(err.message.stderr)
-//     } else {
-//       core.setFailed(err.message)
-//     }
-//   }
-// })()
+})()
