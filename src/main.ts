@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { execSync } from 'child_process'
+import { exec } from '@actions/exec'
 import * as core from '@actions/core'
 import { makeConfig } from './config'
 import { environmentVariables } from './utils/env'
@@ -16,7 +16,18 @@ async function main(): Promise<void> {
   const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
   core.debug(`Working directory resolved at ${dir}`)
 
-  const commandResult = execSync(command, { stdio: 'inherit' }).toString()
+  let commandResult = ''
+  const execOptions = {
+    cwd: dir,
+    listeners: {
+      stdout: (data: Buffer) => {
+        commandResult += data.toString()
+      }
+    }
+  }
+
+  await exec(command, [], execOptions)
+  // const commandResult = exec(command)
   // core.debug(`commandResult should be here-- ${commandResult}`)
 
   // core.debug(`Building comment...`)
