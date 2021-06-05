@@ -153,12 +153,11 @@ function main() {
             }
         };
         yield exec_1.exec(command, [], execOptions);
-        // const commandResult = exec(command)
-        // core.debug(`commandResult should be here-- ${commandResult}`)
-        // core.debug(`Building comment...`)
-        // const comment = commentTemplate(workDir, commandResult)
-        // core.debug(`Built comment... ${comment}`)
-        // core.debug(`Commenting on pull request...`)
+        core.debug(`commandResult should be here-- ${commandResult}`);
+        core.debug(`Building comment...`);
+        const comment = utils_1.commentTemplate(workDir, commandResult);
+        core.debug(`Built comment... ${comment}`);
+        core.debug(`Commenting on pull request...`);
         pr_1.handlePullRequestMessage(commandResult, githubToken);
         core.endGroup();
     });
