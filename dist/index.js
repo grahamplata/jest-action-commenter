@@ -36,7 +36,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.makeListener = exports.makeConfig = exports.config = void 0;
+exports.makeConfig = exports.config = void 0;
 const core_1 = __webpack_require__(2186);
 const rt = __importStar(__webpack_require__(5568));
 // config
@@ -57,19 +57,6 @@ function makeConfig() {
     });
 }
 exports.makeConfig = makeConfig;
-// execOptions
-function makeListener(cwd, input) {
-    return {
-        cwd,
-        listeners: {
-            stdout: (data) => {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                input += data.toString();
-            }
-        }
-    };
-}
-exports.makeListener = makeListener;
 
 
 /***/ }),
@@ -151,16 +138,23 @@ const utils_1 = __webpack_require__(1316);
 const pr_1 = __webpack_require__(4203);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const commandResult = '';
+        let commandBuffer = '';
         const { githubToken, command, workDir } = yield config_1.makeConfig();
         core.debug(`Loading Config...`);
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         core.debug(`Working directory resolved at ${dir}`);
-        const execOptions = config_1.makeListener(dir, commandResult);
+        const execOptions = {
+            cwd: dir,
+            listeners: {
+                stdout: (data) => {
+                    commandBuffer += data.toString();
+                }
+            }
+        };
         yield exec_1.exec(command, [], execOptions);
         core.debug(`Building comment...`);
-        const comment = utils_1.commentTemplate(workDir, commandResult);
+        const comment = utils_1.commentTemplate(workDir, commandBuffer);
         core.debug(`Commenting on pull request...`);
         pr_1.handlePullRequestMessage(comment, githubToken);
         core.endGroup();

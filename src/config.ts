@@ -20,16 +20,3 @@ export async function makeConfig(): Promise<Config> {
     workDir: getInput('work-dir') || './'
   })
 }
-
-// execOptions
-export function makeListener(cwd: string, input: string) {
-  return {
-    cwd,
-    listeners: {
-      stdout: (data: Buffer) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        input += data.toString()
-      }
-    }
-  }
-}
