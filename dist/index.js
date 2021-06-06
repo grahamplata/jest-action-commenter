@@ -164,7 +164,7 @@ function main() {
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         const commandBuffer = yield utils_1.handleCommand(command, dir);
-        const comment = utils_1.handleComment(dir, commandBuffer);
+        const comment = utils_1.handleComment(workDir, commandBuffer);
         pr_1.handlePullRequestMessage(comment, githubToken);
         core.endGroup();
     });
