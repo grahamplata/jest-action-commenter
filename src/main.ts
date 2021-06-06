@@ -1,19 +1,53 @@
+import { resolve } from 'path'
+import { exec } from '@actions/exec'
 import * as core from '@actions/core'
-import {wait} from './wait'
+import { makeConfig } from './config'
+import { environmentVariables } from './utils/env'
+import { invariant, commentTemplate } from './utils/utils'
 
-async function run(): Promise<void> {
-  try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+import { handlePullRequestMessage } from './github/pr'
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+async function main(): Promise<void> {
+  const { githubToken, command, workDir } = await makeConfig()
+  core.debug(`Loading Config...`)
 
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    core.setFailed(error.message)
+  invariant(githubToken, 'github-token is missing.')
+
+  const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
+  core.debug(`Working directory resolved at ${dir}`)
+
+  let commandResult = ''
+  const execOptions = {
+    cwd: dir,
+    listeners: {
+      stdout: (data: Buffer) => {
+        commandResult += data.toString()
+      }
+    }
   }
+
+  await exec(command, [], execOptions)
+  core.debug(`commandResult should be here-- ${commandResult}`)
+
+  core.debug(`Building comment...`)
+  const comment = commentTemplate(workDir, commandResult)
+
+  core.debug(`Built comment... ${comment}`)
+  core.debug(`Commenting on pull request...`)
+  handlePullRequestMessage(comment, githubToken)
+
+  core.endGroup()
 }
 
-run()
+// Main Loop
+;(async () => {
+  try {
+    await main()
+  } catch (err) {
+    if (err.message.stderr) {
+      core.setFailed(err.message.stderr)
+    } else {
+      core.setFailed(err.message)
+    }
+  }
+})()

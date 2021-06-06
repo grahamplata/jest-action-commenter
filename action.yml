@@ -1,11 +1,17 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: "Jest Code Coverage Commenter"
+description: "Comments jest code coverage in a a pull request comment"
+author: "Graham Plata"
+branding:
+  icon: "box"
+  color: "white"
 inputs:
-  milliseconds: # change this
+  github-token:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: "Github Token"
+  test-command:
+    required: false
+    description: "Command to run the tests"
+    default: "yarn run test --coverage"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"
