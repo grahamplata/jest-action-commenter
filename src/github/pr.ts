@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import { context, getOctokit } from '@actions/github'
-import { invariant } from '../utils/utils'
+import { invariant } from '../libs/utils'
 
 // handlePullRequestMessage
 export async function handlePullRequestMessage(

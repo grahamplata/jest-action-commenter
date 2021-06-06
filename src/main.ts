@@ -1,8 +1,8 @@
 import { resolve } from 'path'
 import * as core from '@actions/core'
 import { makeConfig } from './config'
-import { environmentVariables } from './utils/env'
-import { invariant, handleComment, handleCommand } from './utils/utils'
+import { environmentVariables } from './libs/env'
+import { invariant, handleComment, handleCommand } from './libs/utils'
 import { handlePullRequestMessage } from './github/pr'
 
 async function main(): Promise<void> {

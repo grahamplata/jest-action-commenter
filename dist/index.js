@@ -98,7 +98,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.handlePullRequestMessage = void 0;
 const core = __importStar(__webpack_require__(2186));
 const github_1 = __webpack_require__(5438);
-const utils_1 = __webpack_require__(1316);
+const utils_1 = __webpack_require__(7473);
 // handlePullRequestMessage
 function handlePullRequestMessage(body, githubToken) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -116,79 +116,7 @@ exports.handlePullRequestMessage = handlePullRequestMessage;
 
 /***/ }),
 
-/***/ 3109:
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const path_1 = __webpack_require__(5622);
-const core = __importStar(__webpack_require__(2186));
-const config_1 = __webpack_require__(88);
-const env_1 = __webpack_require__(8001);
-const utils_1 = __webpack_require__(1316);
-const pr_1 = __webpack_require__(4203);
-function main() {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.debug(`Start Main...`);
-        const { githubToken, command, workDir } = yield config_1.makeConfig();
-        core.debug(`Loading Config...`);
-        utils_1.invariant(githubToken, 'github-token is missing.');
-        const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
-        const commandBuffer = yield utils_1.handleCommand(command, dir);
-        const comment = utils_1.handleComment(workDir, commandBuffer);
-        pr_1.handlePullRequestMessage(comment, githubToken);
-        core.endGroup();
-    });
-}
-// Main Loop
-;
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield main();
-    }
-    catch (err) {
-        if (err.message.stderr) {
-            core.setFailed(err.message.stderr);
-        }
-        else {
-            core.setFailed(err.message);
-        }
-    }
-}))();
-
-
-/***/ }),
-
-/***/ 8001:
+/***/ 7360:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -225,7 +153,7 @@ exports.environmentVariables = envalid.cleanEnv(process.env, {
 
 /***/ }),
 
-/***/ 1316:
+/***/ 7473:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -295,6 +223,78 @@ function handleCommand(command, dir) {
     });
 }
 exports.handleCommand = handleCommand;
+
+
+/***/ }),
+
+/***/ 3109:
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const path_1 = __webpack_require__(5622);
+const core = __importStar(__webpack_require__(2186));
+const config_1 = __webpack_require__(88);
+const env_1 = __webpack_require__(7360);
+const utils_1 = __webpack_require__(7473);
+const pr_1 = __webpack_require__(4203);
+function main() {
+    return __awaiter(this, void 0, void 0, function* () {
+        core.debug(`Start Main...`);
+        const { githubToken, command, workDir } = yield config_1.makeConfig();
+        core.debug(`Loading Config...`);
+        utils_1.invariant(githubToken, 'github-token is missing.');
+        const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
+        const commandBuffer = yield utils_1.handleCommand(command, dir);
+        const comment = utils_1.handleComment(workDir, commandBuffer);
+        pr_1.handlePullRequestMessage(comment, githubToken);
+        core.endGroup();
+    });
+}
+// Main Loop
+;
+(() => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield main();
+    }
+    catch (err) {
+        if (err.message.stderr) {
+            core.setFailed(err.message.stderr);
+        }
+        else {
+            core.setFailed(err.message);
+        }
+    }
+}))();
 
 
 /***/ }),
