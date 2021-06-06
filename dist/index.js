@@ -66,6 +66,25 @@ exports.makeConfig = makeConfig;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -77,6 +96,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.handlePullRequestMessage = void 0;
+const core = __importStar(__webpack_require__(2186));
 const github_1 = __webpack_require__(5438);
 const utils_1 = __webpack_require__(1316);
 // handlePullRequestMessage
@@ -86,6 +106,7 @@ function handlePullRequestMessage(body, githubToken) {
         utils_1.invariant(payload.pull_request, 'Missing pull request event data.');
         const octokit = github_1.getOctokit(githubToken);
         if (body && githubToken) {
+            core.debug(`Commenting on pull request...`);
             yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number: payload.pull_request.number, body }));
         }
     });
@@ -130,7 +151,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const path_1 = __webpack_require__(5622);
-const exec_1 = __webpack_require__(1514);
 const core = __importStar(__webpack_require__(2186));
 const config_1 = __webpack_require__(88);
 const env_1 = __webpack_require__(8001);
@@ -138,24 +158,12 @@ const utils_1 = __webpack_require__(1316);
 const pr_1 = __webpack_require__(4203);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        let commandBuffer = '';
         const { githubToken, command, workDir } = yield config_1.makeConfig();
         core.debug(`Loading Config...`);
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
-        core.debug(`Working directory resolved at ${dir}`);
-        const execOptions = {
-            cwd: dir,
-            listeners: {
-                stdout: (data) => {
-                    commandBuffer += data.toString();
-                }
-            }
-        };
-        yield exec_1.exec(command, [], execOptions);
-        core.debug(`Building comment...`);
+        const commandBuffer = yield utils_1.handleCommand(command, dir);
         const comment = utils_1.commentTemplate(workDir, commandBuffer);
-        core.debug(`Commenting on pull request...`);
         pr_1.handlePullRequestMessage(comment, githubToken);
         core.endGroup();
     });
@@ -217,12 +225,42 @@ exports.environmentVariables = envalid.cleanEnv(process.env, {
 /***/ }),
 
 /***/ 1316:
-/***/ ((__unused_webpack_module, exports) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.commentTemplate = exports.invariant = void 0;
+exports.handleCommand = exports.commentTemplate = exports.invariant = void 0;
+const core = __importStar(__webpack_require__(2186));
+const exec_1 = __webpack_require__(1514);
 function invariant(condition, message) {
     if (!condition) {
         throw new Error(message);
@@ -231,6 +269,7 @@ function invariant(condition, message) {
 exports.invariant = invariant;
 // commentTemplate
 function commentTemplate(header, message) {
+    core.debug(`Building comment...`);
     const top = `### ${header} Coverage Results \n\n`;
     const bottom = `<details>\n<summary>Click to expand!</summary>\n\n` +
         `\`\`\`shell\n${message}\`\`\`\n`;
@@ -238,11 +277,28 @@ function commentTemplate(header, message) {
     return resp;
 }
 exports.commentTemplate = commentTemplate;
+function handleCommand(command, dir) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let commandBuffer = '';
+        const execOptions = {
+            cwd: dir,
+            listeners: {
+                stdout: (data) => {
+                    commandBuffer += data.toString();
+                }
+            }
+        };
+        core.debug(`Exec ${command}...`);
+        yield exec_1.exec(command, [], execOptions);
+        return commandBuffer;
+    });
+}
+exports.handleCommand = handleCommand;
 
 
 /***/ }),
 
-/***/ 5241:
+/***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -350,7 +406,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const command_1 = __webpack_require__(5241);
+const command_1 = __webpack_require__(7351);
 const file_command_1 = __webpack_require__(717);
 const utils_1 = __webpack_require__(5278);
 const os = __importStar(__webpack_require__(2087));
@@ -712,7 +768,7 @@ const os = __importStar(__webpack_require__(2087));
 const events = __importStar(__webpack_require__(8614));
 const child = __importStar(__webpack_require__(3129));
 const path = __importStar(__webpack_require__(5622));
-const io = __importStar(__webpack_require__(7351));
+const io = __importStar(__webpack_require__(7436));
 const ioUtil = __importStar(__webpack_require__(1962));
 /* eslint-disable @typescript-eslint/unbound-method */
 const IS_WINDOWS = process.platform === 'win32';
@@ -2327,7 +2383,7 @@ function isUnixExecutable(stats) {
 
 /***/ }),
 
-/***/ 7351:
+/***/ 7436:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";

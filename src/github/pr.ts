@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import { context, getOctokit } from '@actions/github'
 import { invariant } from '../utils/utils'
 
@@ -11,6 +12,7 @@ export async function handlePullRequestMessage(
 
   const octokit = getOctokit(githubToken)
   if (body && githubToken) {
+    core.debug(`Commenting on pull request...`)
     await octokit.rest.issues.createComment({
       ...repo,
       issue_number: payload.pull_request.number,
