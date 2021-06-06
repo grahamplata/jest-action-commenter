@@ -158,12 +158,13 @@ const utils_1 = __webpack_require__(1316);
 const pr_1 = __webpack_require__(4203);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
+        core.debug(`Start Main...`);
         const { githubToken, command, workDir } = yield config_1.makeConfig();
         core.debug(`Loading Config...`);
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         const commandBuffer = yield utils_1.handleCommand(command, dir);
-        const comment = utils_1.commentTemplate(workDir, commandBuffer);
+        const comment = utils_1.handleComment(dir, commandBuffer);
         pr_1.handlePullRequestMessage(comment, githubToken);
         core.endGroup();
     });
@@ -258,7 +259,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.handleCommand = exports.commentTemplate = exports.invariant = void 0;
+exports.handleCommand = exports.handleComment = exports.invariant = void 0;
 const core = __importStar(__webpack_require__(2186));
 const exec_1 = __webpack_require__(1514);
 function invariant(condition, message) {
@@ -267,8 +268,8 @@ function invariant(condition, message) {
     }
 }
 exports.invariant = invariant;
-// commentTemplate
-function commentTemplate(header, message) {
+// handleComment
+function handleComment(header, message) {
     core.debug(`Building comment...`);
     const top = `### ${header} Coverage Results \n\n`;
     const bottom = `<details>\n<summary>Click to expand!</summary>\n\n` +
@@ -276,7 +277,7 @@ function commentTemplate(header, message) {
     const resp = top + bottom;
     return resp;
 }
-exports.commentTemplate = commentTemplate;
+exports.handleComment = handleComment;
 function handleCommand(command, dir) {
     return __awaiter(this, void 0, void 0, function* () {
         let commandBuffer = '';

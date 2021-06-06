@@ -10,8 +10,8 @@ export function invariant(
   }
 }
 
-// commentTemplate
-export function commentTemplate(header?: string, message?: string): string {
+// handleComment
+export function handleComment(header?: string, message?: string): string {
   core.debug(`Building comment...`)
   const top = `### ${header} Coverage Results \n\n`
   const bottom =

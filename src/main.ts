@@ -2,16 +2,19 @@ import { resolve } from 'path'
 import * as core from '@actions/core'
 import { makeConfig } from './config'
 import { environmentVariables } from './utils/env'
-import { invariant, commentTemplate, handleCommand } from './utils/utils'
+import { invariant, handleComment, handleCommand } from './utils/utils'
 import { handlePullRequestMessage } from './github/pr'
 
 async function main(): Promise<void> {
+  core.debug(`Start Main...`)
   const { githubToken, command, workDir } = await makeConfig()
   core.debug(`Loading Config...`)
   invariant(githubToken, 'github-token is missing.')
+
   const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
   const commandBuffer = await handleCommand(command, dir)
-  const comment = commentTemplate(workDir, commandBuffer)
+  const comment = handleComment(dir, commandBuffer)
+
   handlePullRequestMessage(comment, githubToken)
   core.endGroup()
 }
