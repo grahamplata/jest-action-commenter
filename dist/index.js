@@ -39,12 +39,14 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.makeConfig = exports.config = void 0;
 const core_1 = __webpack_require__(2186);
 const rt = __importStar(__webpack_require__(5568));
+const utils_1 = __webpack_require__(7473);
 // config
 exports.config = rt.Record({
     // Options
     command: rt.String,
     workDir: rt.String,
-    githubToken: rt.String
+    githubToken: rt.String,
+    editCommentOnPr: rt.Boolean
 });
 // makeConfig
 function makeConfig() {
@@ -52,7 +54,8 @@ function makeConfig() {
         return exports.config.check({
             githubToken: core_1.getInput('github-token', { required: true }),
             command: core_1.getInput('test-command', { required: true }),
-            workDir: core_1.getInput('work-dir') || './'
+            workDir: core_1.getInput('work-dir') || './',
+            editCommentOnPr: utils_1.parseBoolean(core_1.getInput('edit-pr-comment'))
         });
     });
 }
@@ -100,14 +103,22 @@ const core = __importStar(__webpack_require__(2186));
 const github_1 = __webpack_require__(5438);
 const utils_1 = __webpack_require__(7473);
 // handlePullRequestMessage
-function handlePullRequestMessage(body, githubToken) {
+function handlePullRequestMessage(body, githubToken, workDir, editCommentOnPr) {
     return __awaiter(this, void 0, void 0, function* () {
         const { payload, repo } = github_1.context;
         utils_1.invariant(payload.pull_request, 'Missing pull request event data.');
         const octokit = github_1.getOctokit(githubToken);
+        const { data: comments } = yield octokit.rest.issues.listComments(Object.assign(Object.assign({}, repo), { issue_number: payload.pull_request.number }));
+        const comment = comments.find(item => { var _a; return (_a = item.body) === null || _a === void 0 ? void 0 : _a.startsWith(workDir); });
         if (body && githubToken) {
-            core.debug(`Commenting on pull request...`);
-            yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number: payload.pull_request.number, body }));
+            if (comment && editCommentOnPr) {
+                core.debug(`Updating comment on pull request...`);
+                yield octokit.rest.issues.updateComment(Object.assign(Object.assign({}, repo), { comment_id: comment.id, body }));
+            }
+            else {
+                core.debug(`Commenting on pull request...`);
+                yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, repo), { issue_number: payload.pull_request.number, body }));
+            }
         }
     });
 }
@@ -187,7 +198,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.handleCommand = exports.handleComment = exports.invariant = void 0;
+exports.parseBoolean = exports.parseUndefined = exports.handleCommand = exports.handleComment = exports.invariant = void 0;
 const core = __importStar(__webpack_require__(2186));
 const exec_1 = __webpack_require__(1514);
 function invariant(condition, message) {
@@ -223,6 +234,14 @@ function handleCommand(command, dir) {
     });
 }
 exports.handleCommand = handleCommand;
+function parseUndefined(input) {
+    return input === undefined || input === '' ? undefined : input;
+}
+exports.parseUndefined = parseUndefined;
+function parseBoolean(input) {
+    return parseUndefined(input) ? input === 'true' : undefined;
+}
+exports.parseBoolean = parseBoolean;
 
 
 /***/ }),
@@ -270,13 +289,13 @@ const pr_1 = __webpack_require__(4203);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug(`Start Main...`);
-        const { githubToken, command, workDir } = yield config_1.makeConfig();
+        const { githubToken, command, workDir, editCommentOnPr } = yield config_1.makeConfig();
         core.debug(`Loading Config...`);
         utils_1.invariant(githubToken, 'github-token is missing.');
         const dir = path_1.resolve(env_1.environmentVariables.GITHUB_WORKSPACE, workDir);
         const commandBuffer = yield utils_1.handleCommand(command, dir);
         const comment = utils_1.handleComment(workDir, commandBuffer);
-        pr_1.handlePullRequestMessage(comment, githubToken);
+        pr_1.handlePullRequestMessage(comment, githubToken, workDir, editCommentOnPr);
         core.endGroup();
     });
 }

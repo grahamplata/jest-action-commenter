@@ -5,18 +5,34 @@ import { invariant } from '../libs/utils'
 // handlePullRequestMessage
 export async function handlePullRequestMessage(
   body: string,
-  githubToken: string
+  githubToken: string,
+  workDir: string,
+  editCommentOnPr?: boolean
 ): Promise<void> {
   const { payload, repo } = context
   invariant(payload.pull_request, 'Missing pull request event data.')
-
   const octokit = getOctokit(githubToken)
+  const { data: comments } = await octokit.rest.issues.listComments({
+    ...repo,
+    issue_number: payload.pull_request.number
+  })
+  const comment = comments.find(item => item.body?.startsWith(workDir))
+
   if (body && githubToken) {
-    core.debug(`Commenting on pull request...`)
-    await octokit.rest.issues.createComment({
-      ...repo,
-      issue_number: payload.pull_request.number,
-      body
-    })
+    if (comment && editCommentOnPr) {
+      core.debug(`Updating comment on pull request...`)
+      await octokit.rest.issues.updateComment({
+        ...repo,
+        comment_id: comment.id,
+        body
+      })
+    } else {
+      core.debug(`Commenting on pull request...`)
+      await octokit.rest.issues.createComment({
+        ...repo,
+        issue_number: payload.pull_request.number,
+        body
+      })
+    }
   }
 }

@@ -7,7 +7,7 @@ import { handlePullRequestMessage } from './github/pr'
 
 async function main(): Promise<void> {
   core.debug(`Start Main...`)
-  const { githubToken, command, workDir } = await makeConfig()
+  const { githubToken, command, workDir, editCommentOnPr } = await makeConfig()
   core.debug(`Loading Config...`)
   invariant(githubToken, 'github-token is missing.')
 
@@ -15,7 +15,7 @@ async function main(): Promise<void> {
   const commandBuffer = await handleCommand(command, dir)
   const comment = handleComment(workDir, commandBuffer)
 
-  handlePullRequestMessage(comment, githubToken)
+  handlePullRequestMessage(comment, githubToken, workDir, editCommentOnPr)
   core.endGroup()
 }
 

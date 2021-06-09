@@ -39,3 +39,11 @@ export async function handleCommand(
   await exec(command, [], execOptions)
   return commandBuffer
 }
+
+export function parseUndefined(input: string): string | undefined {
+  return input === undefined || input === '' ? undefined : input
+}
+
+export function parseBoolean(input: string): boolean | undefined {
+  return parseUndefined(input) ? input === 'true' : undefined
+}

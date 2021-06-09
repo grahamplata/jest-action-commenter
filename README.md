@@ -43,3 +43,4 @@ The action can be configured with the following `with:` arguments:
 
 - `test-command` (optional) - The command to run as part of the action. Defaults to `npx jest --coverage`
 - `work-dir` (optional) - The directory to execure the test-command from. Defaults to `./`
+- `edit-pr-comment` - (optional) Edit previous PR comment instead of posting new one
