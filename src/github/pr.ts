@@ -16,7 +16,7 @@ export async function handlePullRequestMessage(
     ...repo,
     issue_number: payload.pull_request.number
   })
-  const comment = comments.find(item => item.body?.startsWith(workDir))
+  const comment = comments.find(item => item.body?.includes(workDir))
 
   if (body && githubToken) {
     if (comment && editCommentOnPr) {
