@@ -25,3 +25,4 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           test-command: npx jest --coverage
+          edit-pr-comment: "true"

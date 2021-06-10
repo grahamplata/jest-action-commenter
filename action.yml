@@ -12,6 +12,12 @@ inputs:
     required: false
     description: "Command to run the tests"
     default: "yarn run test --coverage"
+  work-dir:
+    required: false
+    description: "Path to execute test-command"
+  edit-pr-comment:
+    required: false
+    description: "Edit previous Pull Request comment"
 runs:
   using: "node12"
   main: "dist/index.js"

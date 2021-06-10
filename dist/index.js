@@ -109,7 +109,7 @@ function handlePullRequestMessage(body, githubToken, workDir, editCommentOnPr) {
         utils_1.invariant(payload.pull_request, 'Missing pull request event data.');
         const octokit = github_1.getOctokit(githubToken);
         const { data: comments } = yield octokit.rest.issues.listComments(Object.assign(Object.assign({}, repo), { issue_number: payload.pull_request.number }));
-        const comment = comments.find(item => { var _a; return (_a = item.body) === null || _a === void 0 ? void 0 : _a.startsWith(workDir); });
+        const comment = comments.find(item => { var _a; return (_a = item.body) === null || _a === void 0 ? void 0 : _a.startsWith(`### ${workDir}`); });
         if (body && githubToken) {
             if (comment && editCommentOnPr) {
                 core.debug(`Updating comment on pull request...`);
