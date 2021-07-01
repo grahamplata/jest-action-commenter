@@ -38,6 +38,7 @@ export async function handleCommand(
 
   core.debug(`Exec ${command}...`)
   await exec(command, [], execOptions)
+  core.debug(`Exec ${commandBuffer}...`)
   return commandBuffer
 }
 

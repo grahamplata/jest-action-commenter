@@ -13,7 +13,6 @@ async function main(): Promise<void> {
 
   const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
   const commandBuffer = await handleCommand(command, dir)
-  core.debug(`commandBuffer: ${commandBuffer}`)
   const comment = handleComment(workDir, commandBuffer)
 
   handlePullRequestMessage(comment, githubToken, workDir, editCommentOnPr)
