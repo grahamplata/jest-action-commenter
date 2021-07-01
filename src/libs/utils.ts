@@ -21,6 +21,7 @@ export function handleComment(header?: string, message?: string): string {
   return resp
 }
 
+// handleCommand
 export async function handleCommand(
   command: string,
   dir: string
