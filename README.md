@@ -28,6 +28,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           test-command: npx jest --coverage
           work-dir: ./service
+          changed-since-master: "true"
 ```
 
 ## Configuration
@@ -44,3 +45,4 @@ The action can be configured with the following `with:` arguments:
 - `test-command` (optional) - The command to run as part of the action. Defaults to `npx jest --coverage`
 - `work-dir` (optional) - The directory to execure the test-command from. Defaults to `./`
 - `edit-pr-comment` - (optional) Edit previous PR comment instead of posting new one
+- `changed-since-master` - (optional) Runs tests related the changes of files `diff`'d from `base` to `head` of the provided branch.

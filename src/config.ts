@@ -8,6 +8,7 @@ export const config = rt.Record({
   command: rt.String,
   workDir: rt.String,
   githubToken: rt.String,
+  changedSinceMaster: rt.Boolean,
   editCommentOnPr: rt.Boolean
 })
 
@@ -20,6 +21,7 @@ export async function makeConfig(): Promise<Config> {
     githubToken: getInput('github-token', { required: true }),
     command: getInput('test-command', { required: true }),
     workDir: getInput('work-dir') || './',
+    changedSinceMaster: parseBoolean(getInput('changed-since-master')),
     editCommentOnPr: parseBoolean(getInput('edit-pr-comment'))
   })
 }

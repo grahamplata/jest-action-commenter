@@ -2,17 +2,26 @@ import { resolve } from 'path'
 import * as core from '@actions/core'
 import { makeConfig } from './config'
 import { environmentVariables } from './libs/env'
+import { filesChanged } from './libs/files'
 import { invariant, handleComment, handleCommand } from './libs/utils'
 import { handlePullRequestMessage } from './github/pr'
 
 async function main(): Promise<void> {
   core.debug(`Start Main...`)
-  const { githubToken, command, workDir, editCommentOnPr } = await makeConfig()
+  let changed: string[] | undefined
+  const { githubToken, command, workDir, editCommentOnPr, changedSinceMaster } =
+    await makeConfig()
+
   core.debug(`Loading Config...`)
   invariant(githubToken, 'github-token is missing.')
 
   const dir = resolve(environmentVariables.GITHUB_WORKSPACE, workDir)
-  const commandBuffer = await handleCommand(command, dir)
+
+  if (changedSinceMaster) {
+    changed = await filesChanged(githubToken)
+  }
+
+  const commandBuffer = await handleCommand(command, dir, changed)
   const comment = handleComment(workDir, commandBuffer)
 
   handlePullRequestMessage(comment, githubToken, workDir, editCommentOnPr)
