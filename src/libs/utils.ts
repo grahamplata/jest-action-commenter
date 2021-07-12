@@ -21,9 +21,11 @@ export function handleComment(header?: string, message?: string): string {
   return resp
 }
 
+// handleCommand
 export async function handleCommand(
   command: string,
-  dir: string
+  dir: string,
+  files?: string[]
 ): Promise<string> {
   let commandBuffer = ''
   const execOptions = {
@@ -35,15 +37,22 @@ export async function handleCommand(
     }
   }
 
+  if (files) {
+    command = `${command} --findRelatedTests ${files.join(' ')}`
+    core.debug(`Had files ${command}`)
+  }
+
   core.debug(`Exec ${command}...`)
   await exec(command, [], execOptions)
   return commandBuffer
 }
 
+// parseUndefined
 export function parseUndefined(input: string): string | undefined {
   return input === undefined || input === '' ? undefined : input
 }
 
+// parseBoolean
 export function parseBoolean(input: string): boolean | undefined {
   return parseUndefined(input) ? input === 'true' : undefined
 }

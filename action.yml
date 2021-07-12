@@ -15,6 +15,9 @@ inputs:
   work-dir:
     required: false
     description: "Path to execute test-command"
+  changed-since-master:
+    required: false
+    description: "Coverage of files changed since master"
   edit-pr-comment:
     required: false
     description: "Edit previous Pull Request comment"
